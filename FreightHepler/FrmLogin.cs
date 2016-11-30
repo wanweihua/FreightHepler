@@ -3,6 +3,7 @@
     using DevExpress.Utils;
     using DevExpress.XtraEditors;
     using DevExpress.XtraEditors.Controls;
+    using FSLib.Network.Http;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -54,7 +55,55 @@
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            
+            string userName = this.txtUserName.Text.Trim();
+            string password = this.txtPassword.Text.Trim();
+            if ((userName == string.Empty) || (password == string.Empty))
+            {
+                XtraMessageBox.Show("用户名或密码不能为空", "系统提示", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else
+            {
+                LoginInfoTemp.Instance.UserName = userName;
+                LoginInfoTemp.Instance.Password = password;
+                if (!LoginInfoTemp.Instance.ListUsers.Exists(item => item.Name == userName))
+                {
+                    LoginInfoTemp.Instance.ListUsers.Add(new UserName(userName, password));
+                    LoginInfoTemp.Instance.Save();
+                }
+            }
+        //    var client = new HttpClient();
+
+        //    var context = client.Create<string>(HttpMethod.Get, "http://www.baidu.com/");
+        //    context.Send();
+        //    if(context.IsValid())
+        //    {
+        //        //MyMessageBox.ShowMessageBox(context.Result);
+        //    }
+
+
+    //        var client = new HttpClient();
+    //var context = client.Create<JsonContent>(HttpMethod.Get, url, data: new { a = 1, b = 2, c = 520, d = "you're 2b" });
+    //await context.SendTask();
+
+
+            //pic 
+
+            //var client = new HttpClient();
+            //var context = client.Create<Image>(HttpMethod.Get, "http://www.baidu.com/img/bdlogo.png");
+            //await context.SendTask();
+
+            //if (context.IsValid())
+            //{
+            //    AppendText("正在显示图片...");
+
+            //    var form = new Form() { Size = context.Result.Size };
+            //    var pic = new PictureBox();
+            //    form.Controls.Add(pic);
+            //    pic.Dock = DockStyle.Fill;
+            //    pic.Image = context.Result;
+            //    form.Show();
+            //    form.Activate();
+            //}
         }
 
         protected override void Dispose(bool disposing)
@@ -79,18 +128,18 @@
 
         private void FrmLogin_Shown(object sender, EventArgs e)
         {
-            //foreach (string[] strArray in LoginInfoTemp.Instance.ListUsers)
-            //{
-            //    this.txtUserName.Items.Add(strArray[0]);
-            //}
-            //this.txtUserName.Text = LoginInfoTemp.Instance.UserName;
-            //this.txtPassword.Text = LoginInfoTemp.Instance.Password;
-            //this.txtUserName.PopupWidth = this.txtUserName.Width;
-            //this.chkRemerber.Checked = !string.IsNullOrEmpty(LoginInfoTemp.Instance.Password);
-            //if (this.autoLogin && (LoginInfoTemp.Instance.Password.Length > 0))
-            //{
-            //    this.btnLogin_Click(null, null);
-            //}
+            foreach (UserName strArray in LoginInfoTemp.Instance.ListUsers)
+            {             
+                this.txtUserName.Properties.Items.Add(strArray.Name);
+            }
+            this.txtUserName.Text = LoginInfoTemp.Instance.UserName;
+            this.txtPassword.Text = LoginInfoTemp.Instance.Password;
+            
+            this.chkRemerber.Checked = !string.IsNullOrEmpty(LoginInfoTemp.Instance.Password);
+            if (this.autoLogin && (LoginInfoTemp.Instance.Password.Length > 0))
+            {
+                this.btnLogin_Click(null, null);
+            }
         }
 
         private void InitializeComponent()
@@ -256,7 +305,8 @@
         protected override void OnFormClosed(FormClosedEventArgs formClosedEventArgs_0)
         {
             base.OnFormClosed(formClosedEventArgs_0);
-            MethodManager.InvokeNoneException(() => this.threadLogin.Abort());
+            if (threadLogin!=null)
+                MethodManager.InvokeNoneException(() => this.threadLogin.Abort());
         }
 
         private void SetFormEnable(bool enable)
@@ -269,31 +319,31 @@
 
         private void txtUserName_OnRemoveItem(object sender, EventArgs e)
         {
-            string userName = sender.ToString();
-            LoginInfoTemp.Instance.ListUsers.RemoveAll(string_0 => string_0[0] == userName);
-            LoginInfoTemp.Instance.Save();
+           // string userName = sender.ToString();
+           // LoginInfoTemp.Instance.ListUsers.RemoveAll(string_0 =>  == userName);
+           // LoginInfoTemp.Instance.Save();
         }
 
         private void txtUserName_OnSlectetChanged(object sender, EventArgs e)
         {
-            //string str = sender.ToString();
-            //this.txtUserName.Text = str;
-            //this.txtPassword.Text = string.Empty;
-            //using (List<string[]>.Enumerator enumerator = LoginInfoTemp.Instance.ListUsers.GetEnumerator())
-            //{
-            //    string[] current;
-            //    while (enumerator.MoveNext())
-            //    {
-            //        current = enumerator.Current;
-            //        if (current[0] == str)
-            //        {
-            //            goto Label_0057;
-            //        }
-            //    }
-            //    return;
-            //Label_0057:
-            //    this.txtPassword.Text = current[1];
-            //}
+            string str = sender.ToString();
+            this.txtUserName.Text = str;
+            this.txtPassword.Text = string.Empty;
+            using (List<UserName>.Enumerator enumerator = LoginInfoTemp.Instance.ListUsers.GetEnumerator())
+            {
+                UserName current;
+                while (enumerator.MoveNext())
+                {
+                    current = enumerator.Current;
+                    if (current.Name == str)
+                    {
+                        this.txtPassword.Text = current.Name;
+                        break;
+                    }
+                }
+               
+                      
+            }
         }
     }
 }

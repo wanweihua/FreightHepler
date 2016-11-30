@@ -22,6 +22,8 @@ namespace FreightHepler
             BonusSkins.Register();
             SkinManager.EnableFormSkins();
             UserLookAndFeel.Default.SetSkinStyle("DevExpress Style");
+            string path = AppDomain.CurrentDomain.BaseDirectory + @"Data";          
+            DirFile.CreateDirectory(path);
             Application.Run(new FrmLogin());
         }
     }
