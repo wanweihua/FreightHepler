@@ -10,7 +10,7 @@
     using System.Drawing;
     using System.Threading;
     using System.Windows.Forms;
- 
+    
 
     public class FrmLogin : XtraForm
     {
@@ -28,6 +28,9 @@
         private TableLayoutPanel tableLayoutPanel1;
         private Thread threadLogin;
         private TextEdit txtPassword;
+        private PictureBox pictureBoxCaption;
+        private LabelControl labelCaption;
+        private TextEdit textEditCaptcha;
         private ComboBoxEdit txtUserName;
        // private CustomComboBox txtUserName;
 
@@ -37,6 +40,8 @@
             this.autoLogin = false;
             this.components = null;
             this.InitializeComponent();
+            MyWebService.Instance.getCookie(HttpUrl.Instance.initUrl);
+            pictureBoxCaption.Image = MyWebService.Instance.GetCaptcha(HttpUrl.Instance.captchaUrl);
         }
 
         public FrmLogin(bool autoLogin)
@@ -46,6 +51,8 @@
             this.components = null;
             this.autoLogin = autoLogin;
             this.InitializeComponent();
+            MyWebService.Instance.getCookie(HttpUrl.Instance.initUrl);
+            pictureBoxCaption.Image = MyWebService.Instance.GetCaptcha(HttpUrl.Instance.captchaUrl);
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -55,25 +62,61 @@
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            string userName = this.txtUserName.Text.Trim();
-            string password = this.txtPassword.Text.Trim();
-            if ((userName == string.Empty) || (password == string.Empty))
+            //for(int i=0;i<3;i++)
             {
-                XtraMessageBox.Show("用户名或密码不能为空", "系统提示", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
-            else
-            {
-                LoginInfoTemp.Instance.UserName = userName;
-                LoginInfoTemp.Instance.Password = password;
-                if (!LoginInfoTemp.Instance.ListUsers.Exists(item => item.Name == userName))
+                string caption = textEditCaptcha.Text.Trim();
+                string userName = this.txtUserName.Text.Trim();
+                string password = this.txtPassword.Text.Trim();
+                if ((userName == string.Empty) || (password == string.Empty) || caption == string.Empty)
                 {
-                    UserInfo info = new UserInfo(userName, password);
-                    LoginInfoTemp.Instance.ListUsers.Add(info);
-                    this.txtUserName.Properties.Items.Add(info.Name);
-                    LoginInfoTemp.Instance.Save();
+                    XtraMessageBox.Show("用户名或密码及验证码不能为空", "系统提示", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
+                else
+                {
+                    LoginInfoTemp.Instance.UserName = userName;
+                    LoginInfoTemp.Instance.Password = password;
+                    if (!LoginInfoTemp.Instance.ListUsers.Exists(item => item.Name == userName))
+                    {
+                        UserInfo info = new UserInfo(userName, password);
+                        LoginInfoTemp.Instance.ListUsers.Add(info);
+                        this.txtUserName.Properties.Items.Add(info.Name);
+                        LoginInfoTemp.Instance.Save();
+                    }
+                    if (LoginInfoTemp.Instance.ListUsers.Exists(item => item.Name == userName && item.Password != password))
+                    {
+                        UserInfo info = new UserInfo(userName, password);
+                        LoginInfoTemp.Instance.ListUsers.Remove(info);
+                        LoginInfoTemp.Instance.ListUsers.Add(info);
+                        //this.txtUserName.Properties.Items.Remove(info.Name);
+                        LoginInfoTemp.Instance.Save();
+                    }
+                }
+
+                if (caption != string.Empty)
+                {
+                    MyWebService.Instance.PageTypeLogin(HttpUrl.Instance.pageTypeLogin);
+                    bool bSucc = MyWebService.Instance.Login(HttpUrl.Instance.loginUrl, new UserInfo(LoginInfoTemp.Instance.UserName, LoginInfoTemp.Instance.Password), caption);
+                    if (bSucc)
+                    {
+                        //MyWebService.Instance.getCookie("https://frontier.xian.95306.cn/gateway/hydzsw/Dzsw/home.jsp ");
+                        string str = MyWebService.Instance.getHtml("https://frontier.xian.95306.cn/gateway/hydzsw/Dzsw/action/WorkPlatformAction_getCurBgMenu");
+                        if (str.Contains("欢迎您：" + LoginInfoTemp.Instance.UserName)){
+                            XtraMessageBox.Show("登录成功！");
+                            //break;
+                        }
+                        else { 
+                            XtraMessageBox.Show("登录失败!");
+                            pictureBoxCaption.Image = MyWebService.Instance.GetCaptcha(HttpUrl.Instance.captchaUrl);
+                            //continue;
+                        }
+                    }
+
                 }
             }
+            
+            
+            
             //var client = new HttpClient();
 
             //var context = client.Create<string>(HttpMethod.Get, "http://103.235.46.39/");
@@ -149,6 +192,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmLogin));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.pictureBoxCaption = new System.Windows.Forms.PictureBox();
             this.txtUserName = new DevExpress.XtraEditors.ComboBoxEdit();
             this.labelControl3 = new DevExpress.XtraEditors.LabelControl();
             this.btnCancel = new DevExpress.XtraEditors.SimpleButton();
@@ -159,16 +203,23 @@
             this.lblMessage = new System.Windows.Forms.Label();
             this.chkRemerber = new DevExpress.XtraEditors.CheckEdit();
             this.txtPassword = new DevExpress.XtraEditors.TextEdit();
+            this.labelCaption = new DevExpress.XtraEditors.LabelControl();
+            this.textEditCaptcha = new DevExpress.XtraEditors.TextEdit();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCaption)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtUserName.Properties)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chkRemerber.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtPassword.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.textEditCaptcha.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.panel1.Controls.Add(this.labelCaption);
+            this.panel1.Controls.Add(this.textEditCaptcha);
+            this.panel1.Controls.Add(this.pictureBoxCaption);
             this.panel1.Controls.Add(this.txtUserName);
             this.panel1.Controls.Add(this.labelControl3);
             this.panel1.Controls.Add(this.btnCancel);
@@ -181,8 +232,17 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(569, 286);
+            this.panel1.Size = new System.Drawing.Size(572, 315);
             this.panel1.TabIndex = 0;
+            // 
+            // pictureBoxCaption
+            // 
+            this.pictureBoxCaption.Location = new System.Drawing.Point(418, 140);
+            this.pictureBoxCaption.Name = "pictureBoxCaption";
+            this.pictureBoxCaption.Size = new System.Drawing.Size(147, 57);
+            this.pictureBoxCaption.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBoxCaption.TabIndex = 9;
+            this.pictureBoxCaption.TabStop = false;
             // 
             // txtUserName
             // 
@@ -207,7 +267,7 @@
             // btnCancel
             // 
             this.btnCancel.AllowFocus = false;
-            this.btnCancel.Location = new System.Drawing.Point(295, 206);
+            this.btnCancel.Location = new System.Drawing.Point(295, 248);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 5;
@@ -232,7 +292,7 @@
             // 
             // btnLogin
             // 
-            this.btnLogin.Location = new System.Drawing.Point(205, 206);
+            this.btnLogin.Location = new System.Drawing.Point(205, 248);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(75, 23);
             this.btnLogin.TabIndex = 4;
@@ -246,11 +306,11 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.Controls.Add(this.lblMessage, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 249);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 278);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(569, 37);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(572, 37);
             this.tableLayoutPanel1.TabIndex = 5;
             // 
             // lblMessage
@@ -259,14 +319,14 @@
             this.lblMessage.AutoSize = true;
             this.lblMessage.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMessage.ForeColor = System.Drawing.Color.Red;
-            this.lblMessage.Location = new System.Drawing.Point(284, 10);
+            this.lblMessage.Location = new System.Drawing.Point(286, 10);
             this.lblMessage.Name = "lblMessage";
             this.lblMessage.Size = new System.Drawing.Size(0, 16);
             this.lblMessage.TabIndex = 0;
             // 
             // chkRemerber
             // 
-            this.chkRemerber.Location = new System.Drawing.Point(192, 174);
+            this.chkRemerber.Location = new System.Drawing.Point(192, 216);
             this.chkRemerber.Name = "chkRemerber";
             this.chkRemerber.Properties.Caption = "记住用户名与密码";
             this.chkRemerber.Size = new System.Drawing.Size(129, 19);
@@ -283,10 +343,29 @@
             this.txtPassword.Size = new System.Drawing.Size(218, 22);
             this.txtPassword.TabIndex = 2;
             // 
+            // labelCaption
+            // 
+            this.labelCaption.Location = new System.Drawing.Point(143, 178);
+            this.labelCaption.Name = "labelCaption";
+            this.labelCaption.Size = new System.Drawing.Size(48, 14);
+            this.labelCaption.TabIndex = 11;
+            this.labelCaption.Text = "验证码：";
+            // 
+            // textEditCaptcha
+            // 
+            this.textEditCaptcha.Location = new System.Drawing.Point(194, 175);
+            this.textEditCaptcha.Name = "textEditCaptcha";
+            this.textEditCaptcha.Properties.AllowFocused = false;
+            this.textEditCaptcha.Properties.AllowNullInput = DevExpress.Utils.DefaultBoolean.False;
+            this.textEditCaptcha.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
+            this.textEditCaptcha.Properties.PasswordChar = '*';
+            this.textEditCaptcha.Size = new System.Drawing.Size(218, 22);
+            this.textEditCaptcha.TabIndex = 10;
+            // 
             // FrmLogin
             // 
             this.AcceptButton = this.btnLogin;
-            this.ClientSize = new System.Drawing.Size(569, 286);
+            this.ClientSize = new System.Drawing.Size(572, 315);
             this.Controls.Add(this.panel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -297,11 +376,13 @@
             this.Shown += new System.EventHandler(this.FrmLogin_Shown);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCaption)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtUserName.Properties)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chkRemerber.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtPassword.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.textEditCaptcha.Properties)).EndInit();
             this.ResumeLayout(false);
 
         }

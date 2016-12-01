@@ -123,8 +123,8 @@
            });
             //fromUrl=%2Flogin_bur.jsp
            context.SetRefer("https://frontier.xian.95306.cn/gateway/hydzsw/Dzsw/login_bur.jsp");
-           context.SetAllowAutoRedirect(true);
-            context.Send();
+           //context.SetAllowAutoRedirect(true);
+           context.Send();
  
             if (context.IsValid() && context.Response.Status == HttpStatusCode.Redirect)
             {
@@ -191,6 +191,25 @@
                 return true;
             }
             return false;
+        }
+
+        public string getHtml(string url)
+        {
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) =>
+            {
+                return true;
+
+            };
+
+
+            var context = client.Create<string>(HttpMethod.Get, url);
+            //context.SetRefer("https://frontier.xian.95306.cn/gateway/hydzsw/Dzsw/login_bur.jsp");
+            context.Send();
+            if (context.IsValid())
+            {
+                return context.Result;
+            }
+            return string.Empty;
         }
     }
 }

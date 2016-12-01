@@ -96,11 +96,14 @@
     <Compile Include="FrmLogin.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="HttpUrl.cs" />
     <Compile Include="LoginInfoTemp.cs" />
     <Compile Include="MethodManager.cs" />
     <Compile Include="MyMessageBox.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="MyPolicy.cs" />
+    <Compile Include="MyWebService.cs" />
     <Compile Include="PathUtil.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
