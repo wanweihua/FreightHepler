@@ -24,7 +24,7 @@ namespace FreightHepler
             UserLookAndFeel.Default.SetSkinStyle("DevExpress Style");
             string path = AppDomain.CurrentDomain.BaseDirectory + @"Data";          
             DirFile.CreateDirectory(path);
-            Application.Run(new FrmLogin());
+            Application.Run(new XtraFormMain());
         }
     }
 }

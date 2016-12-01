@@ -52,9 +52,13 @@
   <ItemGroup>
     <Reference Include="DevExpress.BonusSkins.v13.2" />
     <Reference Include="DevExpress.Data.v13.2" />
+    <Reference Include="DevExpress.Printing.v13.2.Core, Version=13.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Utils.v13.2" />
     <Reference Include="DevExpress.Sparkline.v13.2.Core" />
     <Reference Include="DevExpress.XtraEditors.v13.2" />
+    <Reference Include="DevExpress.XtraGrid.v13.2, Version=13.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraLayout.v13.2, Version=13.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraPrinting.v13.2, Version=13.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="FSLib.Extension, Version=1.4.2.0, Culture=neutral, PublicKeyToken=61d6a007a0eb6994, processorArchitecture=MSIL">
       <HintPath>..\packages\extension.fishlee.net.1.4.2.0\lib\net40\FSLib.Extension.dll</HintPath>
       <Private>True</Private>
@@ -83,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppConfig.cs" />
+    <Compile Include="Bureau.cs" />
     <Compile Include="ConfigFileUtil.cs" />
     <Compile Include="Convertor.cs" />
     <Compile Include="CustomComboBox.cs">
@@ -110,7 +115,14 @@
     <Compile Include="SerializableTool.cs" />
     <Compile Include="StationName.cs" />
     <Compile Include="TrainInformation.cs" />
+    <Compile Include="UnitPrice.cs" />
     <Compile Include="XmlUtil.cs" />
+    <Compile Include="XtraFormMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="XtraFormMain.Designer.cs">
+      <DependentUpon>XtraFormMain.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="CustomComboBox.resx" />
     <EmbeddedResource Include="FrmLogin.resx" />
     <EmbeddedResource Include="MyMessageBox.resx" />
@@ -125,6 +137,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="XtraFormMain.resx">
+      <DependentUpon>XtraFormMain.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

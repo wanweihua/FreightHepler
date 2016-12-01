@@ -40,8 +40,12 @@
             this.autoLogin = false;
             this.components = null;
             this.InitializeComponent();
-            MyWebService.Instance.getCookie(HttpUrl.Instance.initUrl);
-            pictureBoxCaption.Image = MyWebService.Instance.GetCaptcha(HttpUrl.Instance.captchaUrl);
+            new Thread(delegate()
+            {
+                MyWebService.Instance.getCookie(HttpUrl.Instance.initUrl);
+                pictureBoxCaption.Image = MyWebService.Instance.GetCaptcha(HttpUrl.Instance.captchaUrl);
+            }).Start();
+            
         }
 
         public FrmLogin(bool autoLogin)
@@ -51,8 +55,11 @@
             this.components = null;
             this.autoLogin = autoLogin;
             this.InitializeComponent();
-            MyWebService.Instance.getCookie(HttpUrl.Instance.initUrl);
-            pictureBoxCaption.Image = MyWebService.Instance.GetCaptcha(HttpUrl.Instance.captchaUrl);
+            new Thread(delegate()
+            {
+                MyWebService.Instance.getCookie(HttpUrl.Instance.initUrl);
+                pictureBoxCaption.Image = MyWebService.Instance.GetCaptcha(HttpUrl.Instance.captchaUrl);
+            }).Start();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -100,15 +107,14 @@
                     if (bSucc)
                     {
                         //MyWebService.Instance.getCookie("https://frontier.xian.95306.cn/gateway/hydzsw/Dzsw/home.jsp ");
-                        string str = MyWebService.Instance.getHtml("https://frontier.xian.95306.cn/gateway/hydzsw/Dzsw/action/WorkPlatformAction_getCurBgMenu");
-                        if (str.Contains("欢迎您：" + LoginInfoTemp.Instance.UserName)){
-                            XtraMessageBox.Show("登录成功！");
-                            //break;
+                        string str = MyWebService.Instance.getHtml(HttpUrl.Instance.initOutBurDataPermissionApply);
+                        if (str.Contains("乌鲁木齐铁路局 权限申请")){
+                            this.Close();
+                           
                         }
                         else { 
                             XtraMessageBox.Show("登录失败!");
-                            pictureBoxCaption.Image = MyWebService.Instance.GetCaptcha(HttpUrl.Instance.captchaUrl);
-                            //continue;
+                            pictureBoxCaption.Image = MyWebService.Instance.GetCaptcha(HttpUrl.Instance.captchaUrl); 
                         }
                     }
 
@@ -192,6 +198,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmLogin));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.labelCaption = new DevExpress.XtraEditors.LabelControl();
+            this.textEditCaptcha = new DevExpress.XtraEditors.TextEdit();
             this.pictureBoxCaption = new System.Windows.Forms.PictureBox();
             this.txtUserName = new DevExpress.XtraEditors.ComboBoxEdit();
             this.labelControl3 = new DevExpress.XtraEditors.LabelControl();
@@ -203,15 +211,13 @@
             this.lblMessage = new System.Windows.Forms.Label();
             this.chkRemerber = new DevExpress.XtraEditors.CheckEdit();
             this.txtPassword = new DevExpress.XtraEditors.TextEdit();
-            this.labelCaption = new DevExpress.XtraEditors.LabelControl();
-            this.textEditCaptcha = new DevExpress.XtraEditors.TextEdit();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.textEditCaptcha.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCaption)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtUserName.Properties)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chkRemerber.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtPassword.Properties)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.textEditCaptcha.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -234,6 +240,25 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(572, 315);
             this.panel1.TabIndex = 0;
+            // 
+            // labelCaption
+            // 
+            this.labelCaption.Location = new System.Drawing.Point(143, 178);
+            this.labelCaption.Name = "labelCaption";
+            this.labelCaption.Size = new System.Drawing.Size(48, 14);
+            this.labelCaption.TabIndex = 11;
+            this.labelCaption.Text = "验证码：";
+            // 
+            // textEditCaptcha
+            // 
+            this.textEditCaptcha.Location = new System.Drawing.Point(194, 175);
+            this.textEditCaptcha.Name = "textEditCaptcha";
+            this.textEditCaptcha.Properties.AllowFocused = false;
+            this.textEditCaptcha.Properties.AllowNullInput = DevExpress.Utils.DefaultBoolean.False;
+            this.textEditCaptcha.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
+            this.textEditCaptcha.Properties.PasswordChar = '*';
+            this.textEditCaptcha.Size = new System.Drawing.Size(218, 22);
+            this.textEditCaptcha.TabIndex = 10;
             // 
             // pictureBoxCaption
             // 
@@ -343,25 +368,6 @@
             this.txtPassword.Size = new System.Drawing.Size(218, 22);
             this.txtPassword.TabIndex = 2;
             // 
-            // labelCaption
-            // 
-            this.labelCaption.Location = new System.Drawing.Point(143, 178);
-            this.labelCaption.Name = "labelCaption";
-            this.labelCaption.Size = new System.Drawing.Size(48, 14);
-            this.labelCaption.TabIndex = 11;
-            this.labelCaption.Text = "验证码：";
-            // 
-            // textEditCaptcha
-            // 
-            this.textEditCaptcha.Location = new System.Drawing.Point(194, 175);
-            this.textEditCaptcha.Name = "textEditCaptcha";
-            this.textEditCaptcha.Properties.AllowFocused = false;
-            this.textEditCaptcha.Properties.AllowNullInput = DevExpress.Utils.DefaultBoolean.False;
-            this.textEditCaptcha.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
-            this.textEditCaptcha.Properties.PasswordChar = '*';
-            this.textEditCaptcha.Size = new System.Drawing.Size(218, 22);
-            this.textEditCaptcha.TabIndex = 10;
-            // 
             // FrmLogin
             // 
             this.AcceptButton = this.btnLogin;
@@ -372,17 +378,17 @@
             this.MinimizeBox = false;
             this.Name = "FrmLogin";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "用户登录";
+            this.Text = "用户登录-乌鲁木齐铁路局";
             this.Shown += new System.EventHandler(this.FrmLogin_Shown);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.textEditCaptcha.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCaption)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtUserName.Properties)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chkRemerber.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtPassword.Properties)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.textEditCaptcha.Properties)).EndInit();
             this.ResumeLayout(false);
 
         }

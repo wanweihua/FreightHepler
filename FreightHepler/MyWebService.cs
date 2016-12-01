@@ -2,6 +2,7 @@
 {
     using FSLib.Network.Http;
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.IO;
     using System.IO.Compression;
@@ -122,7 +123,7 @@
                                                                                 fromUrl = "/login_bur.jsp"
            });
             //fromUrl=%2Flogin_bur.jsp
-           context.SetRefer("https://frontier.xian.95306.cn/gateway/hydzsw/Dzsw/login_bur.jsp");
+           //context.SetRefer("https://frontier.xian.95306.cn/gateway/hydzsw/Dzsw/login_bur.jsp");
            //context.SetAllowAutoRedirect(true);
            context.Send();
  
@@ -166,7 +167,7 @@
             };
 
             var context = client.Create<string>(HttpMethod.Post, url, data: new { pageType = "login" });
-            context.SetRefer("https://frontier.xian.95306.cn/gateway/hydzsw/Dzsw/login_bur.jsp");
+           // context.SetRefer("https://frontier.xian.95306.cn/gateway/hydzsw/Dzsw/login_bur.jsp");
             context.Send();
             if (context.IsValid())
             {
@@ -184,7 +185,7 @@
            
 
             var context = client.Create<string>(HttpMethod.Get, url);
-            context.SetRefer("https://frontier.xian.95306.cn/gateway/hydzsw/Dzsw/login_bur.jsp");
+           // context.SetRefer("https://frontier.xian.95306.cn/gateway/hydzsw/Dzsw/login_bur.jsp");
             context.Send();
             if (context.IsValid())
             {
@@ -203,13 +204,51 @@
 
 
             var context = client.Create<string>(HttpMethod.Get, url);
-            //context.SetRefer("https://frontier.xian.95306.cn/gateway/hydzsw/Dzsw/login_bur.jsp");
+         
             context.Send();
             if (context.IsValid())
             {
                 return context.Result;
             }
             return string.Empty;
+        }
+
+        public List<UnitPrice> GetUnit(string url)
+        {
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) =>
+            {
+                return true;
+
+            };
+
+
+            var context = client.Create<List<UnitPrice>>(HttpMethod.Get, url);
+         
+            context.Send();
+            if (context.IsValid())
+            {
+               
+                return context.Result;
+            }
+            return null;
+        }
+
+        public List<Bureau> getCurBureauFz(string url)
+        {
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) =>
+            {
+                return true;
+
+            };
+            var context = client.Create<List<Bureau>>(HttpMethod.Get, url);
+
+            context.Send();
+            if (context.IsValid())
+            {
+
+                return context.Result;
+            }
+            return null;
         }
     }
 }
