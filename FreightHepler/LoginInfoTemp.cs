@@ -7,7 +7,7 @@
     public class LoginInfoTemp
     {
         private static LoginInfoTemp conditionTemp = null;
-        private List<UserName> listUsers;
+        private List<UserInfo> listUsers;
         private string password = string.Empty;
        // private List<TrainInformation> ticketConditionListTrain;
        // private string ticketConditonEnables = string.Empty;
@@ -36,14 +36,14 @@
                 }
                 if (conditionTemp.ListUsers == null)
                 {
-                    conditionTemp.ListUsers = new List<UserName>();
+                    conditionTemp.ListUsers = new List<UserInfo>();
                 }
                 
                 return conditionTemp;
             }
         }
 
-        public List<UserName> ListUsers
+        public List<UserInfo> ListUsers
         {
             get
             {
@@ -80,23 +80,24 @@
     }
 
     [Serializable]
-    public class UserName
+    public class UserInfo
     {
-        public UserName(string user,string name)
+        public UserInfo(string name, string password)
         {
-            this.user = user;
+           
             this.name = name;
+            this.password = password;
         }
-        private string user = string.Empty;
-        public string User
+        private string password = string.Empty;
+        public string Password
         {
             get
             {
-                return this.user;
+                return this.password;
             }
             set
             {
-                this.user = value;
+                this.password = value;
             }
         }
 

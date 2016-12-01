@@ -60,6 +60,7 @@
             if ((userName == string.Empty) || (password == string.Empty))
             {
                 XtraMessageBox.Show("用户名或密码不能为空", "系统提示", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
             }
             else
             {
@@ -67,18 +68,20 @@
                 LoginInfoTemp.Instance.Password = password;
                 if (!LoginInfoTemp.Instance.ListUsers.Exists(item => item.Name == userName))
                 {
-                    LoginInfoTemp.Instance.ListUsers.Add(new UserName(userName, password));
+                    UserInfo info = new UserInfo(userName, password);
+                    LoginInfoTemp.Instance.ListUsers.Add(info);
+                    this.txtUserName.Properties.Items.Add(info.Name);
                     LoginInfoTemp.Instance.Save();
                 }
             }
-        //    var client = new HttpClient();
+            //var client = new HttpClient();
 
-        //    var context = client.Create<string>(HttpMethod.Get, "http://www.baidu.com/");
-        //    context.Send();
-        //    if(context.IsValid())
-        //    {
-        //        //MyMessageBox.ShowMessageBox(context.Result);
-        //    }
+            //var context = client.Create<string>(HttpMethod.Get, "http://103.235.46.39/");
+            //context.Send();
+            //if (context.IsValid())
+            //{
+            //    //MyMessageBox.ShowMessageBox(context.Result);
+            //}
 
 
     //        var client = new HttpClient();
@@ -128,7 +131,7 @@
 
         private void FrmLogin_Shown(object sender, EventArgs e)
         {
-            foreach (UserName strArray in LoginInfoTemp.Instance.ListUsers)
+            foreach (UserInfo strArray in LoginInfoTemp.Instance.ListUsers)
             {             
                 this.txtUserName.Properties.Items.Add(strArray.Name);
             }
@@ -189,6 +192,7 @@
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
             this.txtUserName.Size = new System.Drawing.Size(218, 22);
             this.txtUserName.TabIndex = 1;
+            this.txtUserName.SelectedIndexChanged += new System.EventHandler(this.txtUserName_OnSlectetChanged);
             // 
             // labelControl3
             // 
@@ -326,23 +330,24 @@
 
         private void txtUserName_OnSlectetChanged(object sender, EventArgs e)
         {
-            string str = sender.ToString();
-            this.txtUserName.Text = str;
+            ComboBoxEdit boxEdit = sender as ComboBoxEdit;
+
+            this.txtUserName.Text = boxEdit.EditValue.ToString() ;
             this.txtPassword.Text = string.Empty;
-            using (List<UserName>.Enumerator enumerator = LoginInfoTemp.Instance.ListUsers.GetEnumerator())
+            using (List<UserInfo>.Enumerator enumerator = LoginInfoTemp.Instance.ListUsers.GetEnumerator())
             {
-                UserName current;
+                UserInfo current;
                 while (enumerator.MoveNext())
                 {
                     current = enumerator.Current;
-                    if (current.Name == str)
+                    if (current.Name == boxEdit.EditValue.ToString())
                     {
-                        this.txtPassword.Text = current.Name;
+                        this.txtPassword.Text = current.Password;
                         break;
                     }
                 }
-               
-                      
+
+
             }
         }
     }
