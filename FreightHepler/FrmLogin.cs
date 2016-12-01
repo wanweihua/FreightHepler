@@ -83,19 +83,19 @@
                         this.txtUserName.Properties.Items.Add(info.Name);
                         LoginInfoTemp.Instance.Save();
                     }
-                    if (LoginInfoTemp.Instance.ListUsers.Exists(item => item.Name == userName && item.Password != password))
-                    {
-                        UserInfo info = new UserInfo(userName, password);
-                        LoginInfoTemp.Instance.ListUsers.Remove(info);
-                        LoginInfoTemp.Instance.ListUsers.Add(info);
-                        //this.txtUserName.Properties.Items.Remove(info.Name);
-                        LoginInfoTemp.Instance.Save();
-                    }
+                    //if (LoginInfoTemp.Instance.ListUsers.Exists(item => item.Name == userName && item.Password != password))
+                    //{
+                    //    UserInfo info = new UserInfo(userName, password);
+                    //    LoginInfoTemp.Instance.ListUsers.Remove(info);
+                    //    LoginInfoTemp.Instance.ListUsers.Add(info);
+                    //    //this.txtUserName.Properties.Items.Remove(info.Name);
+                    //    LoginInfoTemp.Instance.Save();
+                    //}
                 }
 
                 if (caption != string.Empty)
                 {
-                    MyWebService.Instance.PageTypeLogin(HttpUrl.Instance.pageTypeLogin);
+                    //MyWebService.Instance.PageTypeLogin(HttpUrl.Instance.pageTypeLogin);
                     bool bSucc = MyWebService.Instance.Login(HttpUrl.Instance.loginUrl, new UserInfo(LoginInfoTemp.Instance.UserName, LoginInfoTemp.Instance.Password), caption);
                     if (bSucc)
                     {
