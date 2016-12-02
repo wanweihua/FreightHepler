@@ -32,6 +32,7 @@
         private LabelControl labelCaption;
         private TextEdit textEditCaptcha;
         private ComboBoxEdit txtUserName;
+        public DataPermission Permission;
        // private CustomComboBox txtUserName;
 
         public FrmLogin()
@@ -39,11 +40,17 @@
             this.randCode = string.Empty;
             this.autoLogin = false;
             this.components = null;
+            
             this.InitializeComponent();
             new Thread(delegate()
             {
-                MyWebService.Instance.getCookie(HttpUrl.Instance.initUrl);
-                pictureBoxCaption.Image = MyWebService.Instance.GetCaptcha(HttpUrl.Instance.captchaUrl);
+                try 
+                { 
+                    MyWebService.Instance.getCookie(HttpUrl.Instance.initUrl);
+                    pictureBoxCaption.Image = MyWebService.Instance.GetCaptcha(HttpUrl.Instance.captchaUrl);
+                }
+                catch (Exception ex) { XtraMessageBox.Show(ex.Message); }
+
             }).Start();
             
         }
@@ -57,9 +64,14 @@
             this.InitializeComponent();
             new Thread(delegate()
             {
-                MyWebService.Instance.getCookie(HttpUrl.Instance.initUrl);
-                pictureBoxCaption.Image = MyWebService.Instance.GetCaptcha(HttpUrl.Instance.captchaUrl);
+                try
+                {
+                    MyWebService.Instance.getCookie(HttpUrl.Instance.initUrl);
+                    pictureBoxCaption.Image = MyWebService.Instance.GetCaptcha(HttpUrl.Instance.captchaUrl);
+                }
+                catch (Exception ex) { XtraMessageBox.Show(ex.Message); }
             }).Start();
+            
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -108,8 +120,18 @@
                     {
                         //MyWebService.Instance.getCookie("https://frontier.xian.95306.cn/gateway/hydzsw/Dzsw/home.jsp ");
                         string str = MyWebService.Instance.getHtml(HttpUrl.Instance.initOutBurDataPermissionApply);
-                        if (str.Contains("乌鲁木齐铁路局 权限申请")){
+                        //uuid:'E593F53B868747DEA732DF1A049E0685',
+                        string uuid = StringUtil.SubString(str,"uuid:'","',");
+                        MyWebService.Instance.UUID = uuid;
+                        if (!string.IsNullOrEmpty(uuid))
+                        {
                             this.Close();
+                           
+                           // new Thread(delegate()
+                           // {
+                            MyWebService.Instance.DataPermission = MyWebService.Instance.getDataPermission(HttpUrl.Instance.searchDataPermissionApply, uuid);
+                                
+                           // }).Start();
                            
                         }
                         else { 
@@ -138,24 +160,7 @@
     //await context.SendTask();
 
 
-            //pic 
-
-            //var client = new HttpClient();
-            //var context = client.Create<Image>(HttpMethod.Get, "http://www.baidu.com/img/bdlogo.png");
-            //await context.SendTask();
-
-            //if (context.IsValid())
-            //{
-            //    AppendText("正在显示图片...");
-
-            //    var form = new Form() { Size = context.Result.Size };
-            //    var pic = new PictureBox();
-            //    form.Controls.Add(pic);
-            //    pic.Dock = DockStyle.Fill;
-            //    pic.Image = context.Result;
-            //    form.Show();
-            //    form.Activate();
-            //}
+   
         }
 
         protected override void Dispose(bool disposing)

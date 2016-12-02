@@ -14,6 +14,11 @@
 
     public class MyWebService
     {
+        public DataPermission DataPermission;
+        public string UUID = string.Empty;
+        public List<UnitPrice> listUnit=new List<UnitPrice>();
+        public List<Bureau> listBureau = new List<Bureau>();
+        public List<PM> listPM = new List<PM>();
         public MyWebService()
         {
             ServicePointManager.DefaultConnectionLimit = 0x200;
@@ -50,6 +55,45 @@
                         
                 return WebService;
             }
+        }
+        public DateTime GetServerDate()
+        {
+            HttpWebRequest request = null;
+            HttpWebResponse response = null;
+            StreamReader reader = null;
+            DateTime time;
+            try
+            {
+                request = (HttpWebRequest) WebRequest.Create("http://www.12306.cn/mormhweb/");
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.Headers.Add("Accept-Language: zh-cn");
+                request.Headers.Add("Accept-Encoding: gzip, default");
+                request.Headers.Add("x-requested-with", "XMLHttpRequest");
+                request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2486.0 Safari/537.36 Edge/13.10586";
+                request.Headers.Add("Pragma", "no-cache");
+                request.Headers.Add("If-None-Match", DateTime.Now.Ticks.ToString());
+                request.Timeout = 0x4e20;
+                request.ReadWriteTimeout = 0x2710;
+                response = (HttpWebResponse) request.GetResponse();
+                time = DateTime.Parse(response.Headers["Date"]);
+            }
+            finally
+            {
+                if (request != null)
+                {
+                    request.Abort();
+                }
+                if (response != null)
+                {
+                    response.Close();
+                }
+                if (reader != null)
+                {
+                    reader.Close();
+                }
+            }
+            return time;
+
         }
         public static string[] GetHttpRequest(string url, string ipAddress, string strCookie)
         {
@@ -133,7 +177,7 @@
             }
             else
                 return false;
-            return false;
+           
         }
 
         public Image GetCaptcha(string url)
@@ -193,7 +237,22 @@
             }
             return false;
         }
+        public Submit OutBurDataPermissionApply(string url, string strUudi)
+        {
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) =>
+            {
+                return true;
 
+            };
+            var context = client.Create<Submit>(HttpMethod.Post, url, data: new { uuid = strUudi });
+
+            context.Send();
+            if (context.IsValid())
+            {
+                return context.Result;
+            }
+            return null;
+        }
         public string getHtml(string url)
         {
             System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) =>
@@ -250,6 +309,53 @@
             }
             return null;
         }
+
+        public List<PM> getAllPm(string url)
+        {
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) =>
+            {
+                return true;
+
+            };
+            var context = client.Create<List<PM>>(HttpMethod.Get, url);
+
+            context.Send();
+            if (context.IsValid())
+            {
+
+                return context.Result;
+            }
+            return null;
+        }
+
+        public DataPermission getDataPermission(string url,string uuid)
+        {
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) =>
+            {
+                return true;
+
+            };
+            //uuid=E593F53B868747DEA732DF1A049E0685&fhdwdm=&fhdwmc=&fztmism=&pmdm=&showBC=Y&_search=false&nd=1480645210251&page.pageSize=20&
+            //page.curPageNo=1&page.orderBy=dataPermissionId&page.order=asc
+          //  url += "uuid=E593F53B868747DEA732DF1A049E0685&fhdwdm=&fhdwmc=&fztmism=&pmdm=&showBC=Y&_search=false&nd=1480645210251&page.pageSize=20&page.curPageNo=1&page.orderBy=dataPermissionId&page.order=asc";
+            //page.curPageNo=1&page.orderBy=dataPermissionId&page.order=asc"
+            //Page page = new Page();
+            //page.pageSize = 20;
+            //page.curPageN = 1;
+            //page.orderBy = "dataPermissionId";
+            //page.order = "asc";
+            var context = client.Create<DataPermission>(HttpMethod.Post, url, data: "uuid=" + uuid + "&fhdwdm=&fhdwmc=&fztmism=&pmdm=&showBC=Y&_search=false&nd=1480649236891&page.pageSize=20&page.curPageNo=1&page.orderBy=dataPermissionId&page.order=asc"                        
+                );
+
+            context.Send();
+            if (context.IsValid())
+            {
+
+                return context.Result;
+            }
+            return null;
+        }
+        
     }
 }
 

@@ -114,9 +114,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerializableTool.cs" />
     <Compile Include="StationName.cs" />
+    <Compile Include="StringUtil.cs" />
+    <Compile Include="SysDateTime.cs" />
     <Compile Include="TrainInformation.cs" />
     <Compile Include="UnitPrice.cs" />
     <Compile Include="XmlUtil.cs" />
+    <Compile Include="XtraFormEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="XtraFormEdit.Designer.cs">
+      <DependentUpon>XtraFormEdit.cs</DependentUpon>
+    </Compile>
     <Compile Include="XtraFormMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -137,6 +145,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="XtraFormEdit.resx">
+      <DependentUpon>XtraFormEdit.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="XtraFormMain.resx">
       <DependentUpon>XtraFormMain.cs</DependentUpon>
     </EmbeddedResource>

@@ -18,6 +18,9 @@
         public string searchDataPermissionApply = string.Empty;
         public string UnitUrl = string.Empty;
         public string CurBureauFz = string.Empty;
+        public string PM = string.Empty;
+        public string queryZyxByTmism = string.Empty;
+        public string outBurDataPermissionApply = string.Empty;
         private static HttpUrl HttpURL = null;
         public static HttpUrl Instance
         {
@@ -34,6 +37,8 @@
         public HttpUrl()
         {
              host = "https://frontier.wulmq.95306.cn";
+             //host = "https://frontier.lanzh.95306.cn";
+             
              loginUrl = host + "/gateway/hydzsw/Dzsw/j_spring_security_check";
              captchaUrl = host + "/gateway/hydzsw/Dzsw/security/jcaptcha.jpg";
              pageTypeLogin = host + "/gateway/hydzsw/Dzsw/action/TbSysLogincountPerdateAction_countingLogincountPerdate";
@@ -45,6 +50,12 @@
             //https://frontier.wulmq.95306.cn/gateway/hydzsw/Dzsw/action/AjaxAction_getAllUnit?q=01-602%E5%BA%93&limit=50&timestamp=1480593804029
 
              CurBureauFz = host + "/gateway/hydzsw/Dzsw/action/AjaxAction_getCurBureauFz?q=&limit=50&timestamp=1480593804266";
+             PM = host + "/gateway/hydzsw/Dzsw/action/AjaxAction_getAllPm?q=&limit=50&timestamp=1480642768800";
+             //searchDataPermissionApply = host + "/gateway/hydzsw/Dzsw/action/TbUnitInfoApplyAction_searchDataPermissionApply";
+             queryZyxByTmism = host + "/gateway/hydzsw/Dzsw/action/AjaxAction_queryZyxByTmism";
+             outBurDataPermissionApply = host + "/gateway/hydzsw/Dzsw/action/TbUnitInfoApplyAction_outBurDataPermissionApply";
+
+            //https://frontier.lanzh.95306.cn/gateway/hydzsw/Dzsw/action/TbUnitInfoApplyAction_searchDataPermissionApply 
         }
         
     }
